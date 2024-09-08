@@ -75,17 +75,15 @@ const brailleToEnglish = {
 };
 
 (function main() {
-    // Read input from the command line
     const input = process.argv[2];
     
     if (input) {
-        // Determine whether the input is Braille or English
         if (isBraille(input)) {
-        translateBrailleToEnglish(input); // Translate Braille to English
-        console.log(`${translateBrailleToEnglish(input)}`); // Output the English translation
+        translateBrailleToEnglish(input);
+        console.log(`${translateBrailleToEnglish(input)}`); 
         } else {
-        translateEnglishToBraille(input); // Translate English to Braille
-        console.log(`${translateEnglishToBraille(input)}`); // Output the Braille translation
+        translateEnglishToBraille(input);
+        console.log(`${translateEnglishToBraille(input)}`); 
         }
     } else {
         console.log("Please provide an input string.");
@@ -94,7 +92,7 @@ const brailleToEnglish = {
 
 // Function to determine whether input is Braille or English
 function isBraille(input) {
-    // Check if the input contains only "O" and "." and if its length is divisible by 6
+    // check if input contains only "O" and "." and if its length is divisible by 6
     const isValidBraille = /^[O.]+$/.test(input) && input.length % 6 === 0;
     return isValidBraille;
   }
@@ -102,35 +100,30 @@ function isBraille(input) {
 // Function to translate English to Braille
 function translateEnglishToBraille(englishString) {
   let brailleTranslation = "";
-  let isNumber = false; // Keeps track of whether we're in a number sequence
+  let isNumber = false; 
 
-  // Loop through each character in the string
   for (let char of englishString) {
     const lowerChar = char.toLowerCase();
-
-    // Check if the character is a number
+    
     if (/[0-9]/.test(char)) {
       if (!isNumber) {
-        // Append the number marker before the first number in the sequence
         brailleTranslation += englishToBraille["num"];
         isNumber = true; // We are now in a number sequence
       }
-      // Add the corresponding Braille pattern for the number
+      
       brailleTranslation += englishToBraille[char];
     } else {
-      // Reset number flag when transitioning back to letters
       isNumber = false;
 
-      // Check if the character is uppercase
+
       if (char !== lowerChar && /[a-zA-Z]/.test(char)) {
-        brailleTranslation += englishToBraille["cap"]; // Add capitalization marker
+        brailleTranslation += englishToBraille["cap"]; //  capitalization marker
       }
 
-      // Add the corresponding Braille pattern from the mapping
       if (englishToBraille[lowerChar]) {
         brailleTranslation += englishToBraille[lowerChar];
       } else {
-        brailleTranslation += "?"; // Handle unknown characters (just in case)
+        brailleTranslation += "?"; // handle unknown characters (just in case)
       }
     }
   }
@@ -148,19 +141,18 @@ function translateBrailleToEnglish(brailleString) {
   for (let i = 0; i < brailleString.length; i += 6) {
     const brailleChar = brailleString.substring(i, i + 6);
 
-    // Check for the capitalization marker
+    // check for the capitalization marker
     if (brailleChar === ".....O") {
       isCapital = true;
-      continue; // Skip the capitalization marker in the translation
+      continue; 
     }
 
-    // Check for the number marker
+    // check for the number marker
     if (brailleChar === ".O.OOO") {
       isNumber = true;
-      continue; // Skip the number marker in the translation
-    }
+      continue; 
+    } 
 
-    // Translate the Braille character to English
     let englishChar;
     if (brailleToEnglish[brailleChar]) {
       if (isNumber) {
@@ -182,20 +174,21 @@ function translateBrailleToEnglish(brailleString) {
         englishChar = brailleToEnglish[brailleChar];
       }
 
-      // If it's a capital letter, convert it to uppercase
       if (isCapital && englishChar !== " ") {
         englishChar = englishChar.toUpperCase();
-        isCapital = false; // Reset the capital flag after using it
+        isCapital = false; 
       }
 
-      // Append the translated character to the English translation
+ 
       englishTranslation += englishChar;
     } else {
-      englishTranslation += "?"; // Handle unknown Braille characters
+      englishTranslation += "?"; 
     }
 
-    // Reset the number flag if we encounter a non-number
-    if (!/[0-9]/.test(englishChar)) {
+    brailleString.substring(i+6, i + 12)
+
+    // Reset the number flag if the next character is a space ie. number sequence has ended
+    if (brailleString.substring(i+6, i + 12) == "......") {
       isNumber = false;
     }
   }
